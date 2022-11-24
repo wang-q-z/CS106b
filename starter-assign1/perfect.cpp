@@ -55,8 +55,23 @@ void findPerfects(long stop) {
  * header comment.
  */
 long smarterSum(long n) {
-    /* TODO: Fill in this function. */
-    return 0;
+
+    if(n == 1)
+        return 0;
+
+    long total = 0;
+    for (long divisor = 1; divisor <= sqrt(n); divisor++) {
+        if(n % divisor == 0){
+        if (divisor == 1 || n == (divisor*divisor)) {
+            total += divisor;
+        }
+        else{
+            total += divisor + n / divisor;
+        }
+    }
+
+    }
+    return total;
 }
 
 /* TODO: Replace this comment with a descriptive function
@@ -64,7 +79,7 @@ long smarterSum(long n) {
  */
 bool isPerfectSmarter(long n) {
     /* TODO: Fill in this function. */
-    return false;
+    return (n != 0) && (smarterSum(n) == n);
 }
 
 /* TODO: Replace this comment with a descriptive function
@@ -72,6 +87,13 @@ bool isPerfectSmarter(long n) {
  */
 void findPerfectsSmarter(long stop) {
      /* TODO: Fill in this function. */
+         for (long num = 1; num < stop; num++) {
+        if (isPerfectSmarter(num)) {
+            cout << "Found perfect number: " << num << endl;
+        }
+        if (num % 10000 == 0) cout << "." << flush; // progress bar
+    }
+    cout << endl << "Done searching up to " << stop << endl;
 }
 
 /* TODO: Replace this comment with a descriptive function
@@ -79,7 +101,17 @@ void findPerfectsSmarter(long stop) {
  */
 long findNthPerfectEuclid(long n) {
     /* TODO: Fill in this function. */
-    return 0;
+    long i = 0;
+    long k = 1;
+    long perfectnum = 0;
+    while(i != n){
+        while(smarterSum(pow(2,k)-1) != 1){
+            k++;
+        }
+        perfectnum = pow(2,k-1)*(pow(2,k)-1);
+        i++;
+    }
+    return  perfectnum;
 }
 
 
@@ -126,7 +158,7 @@ PROVIDED_TEST("Time trial of findPerfects on input size 1000") {
  * Below is a suggestion of how to use a loop to set the input sizes
  * for a sequence of time trials.
  *
- *
+ */
 STUDENT_TEST("Multiple time trials of findPerfects on increasing input sizes") {
 
     int smallest = 1000, largest = 8000;
@@ -136,4 +168,46 @@ STUDENT_TEST("Multiple time trials of findPerfects on increasing input sizes") {
     }
 }
 
-*/
+STUDENT_TEST("Confirm smartsum of small inputs") {
+    EXPECT_EQUAL(smarterSum(1), divisorSum(1));
+    EXPECT_EQUAL(smarterSum(6),divisorSum(6));
+    EXPECT_EQUAL(smarterSum(12),divisorSum(12));
+    EXPECT_EQUAL(smarterSum(25),divisorSum(25));
+    EXPECT_EQUAL(smarterSum(49),divisorSum(49));
+}
+
+STUDENT_TEST("Confirm 6 and 28 are perfect") {
+    EXPECT(isPerfectSmarter(6));
+    EXPECT(isPerfectSmarter(28));
+}
+
+STUDENT_TEST("Confirm 12 and 98765 are not perfect") {
+    EXPECT(!isPerfectSmarter(12));
+    EXPECT(!isPerfectSmarter(98765));
+}
+
+STUDENT_TEST("Test oddballs: 0 and 1 are not perfect") {
+    EXPECT(!isPerfectSmarter(0));
+    EXPECT(!isPerfectSmarter(1));
+}
+
+STUDENT_TEST("Confirm 33550336 is perfect") {
+    EXPECT(isPerfectSmarter(33550336));
+}
+
+STUDENT_TEST("Multiple time trials of findPerfectsSmart on increasing input sizes") {
+
+    int smallest = 1000, largest = 8000;
+
+    for (int size = smallest; size <= largest; size *= 2) {
+        TIME_OPERATION(size, findPerfectsSmarter(size));
+    }
+}
+
+STUDENT_TEST("Euclid test"){
+    EXPECT(isPerfect(findNthPerfectEuclid(2)));
+    EXPECT(isPerfect(findNthPerfectEuclid(3)));
+    EXPECT(isPerfect(findNthPerfectEuclid(4)));
+    EXPECT(isPerfect(findNthPerfectEuclid(6)));
+}
+//*/
